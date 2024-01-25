@@ -4,6 +4,7 @@ using Services;
 using DAL.Contexts;
 using DAL.Repositories;
 using DAL.Models;
+using Mapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,9 +26,14 @@ builder.Services.AddScoped<IBaseRepository<Supply, Guid>, BaseRepository<Supply,
 
 builder.Services.AddScoped<ISupplyService, SupplyService>();
 
+builder.Services.AddAutoMapper(typeof(AppMappingProfile));
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.CustomSchemaIds(type => type.ToString());
+});
 
 var app = builder.Build();
 
