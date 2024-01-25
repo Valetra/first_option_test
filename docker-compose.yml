@@ -1,0 +1,34 @@
+services:
+  orders_database:
+    image: postgres:alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=orders
+      - POSTGRES_USER=orders_user
+      - POSTGRES_PASSWORD=orders_pass
+    ports:
+      - '5510:5432'
+    volumes:
+      - orders-database:/var/lib/postgresql/data
+
+  supplies_database:
+    image: postgres:alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=supplies
+      - POSTGRES_USER=supplies_user
+      - POSTGRES_PASSWORD=supplies_pass
+    ports:
+      - '5511:5432'
+    volumes:
+      - supplies-database:/var/lib/postgresql/data
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  orders-database:
+    driver: local
+  supplies-database:
+    driver: local
