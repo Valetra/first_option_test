@@ -1,5 +1,6 @@
 using DAL.Models;
 using DAL.Repositories;
+using Exceptions;
 
 namespace Services;
 
@@ -10,13 +11,31 @@ public class SupplyService(IBaseRepository<Supply, Guid> supplyRepository) : ISu
         return await supplyRepository.GetAll();
     }
 
-    public Task Delete(Guid id)
+    public async Task<bool> Create(Supply supply)
     {
-        return supplyRepository.Delete(id);
+        try
+        {
+            await supplyRepository.Create(supply);
+
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
-    public async Task<Supply> Create(Supply supply)
+    public async Task<bool> Delete(Guid id)
     {
-        return await supplyRepository.Create(supply);
+        try
+        {
+            await supplyRepository.Delete(id);
+
+            return true;
+        }
+        catch (NonExistedSupplyException)
+        {
+            return false;
+        }
     }
 }
