@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
+using Exceptions;
+
 namespace DAL.Repositories;
 
 public class BaseRepository<TModel, T>(DbContext context) : IBaseRepository<TModel, T> where TModel : BaseModel<T>
@@ -7,15 +9,9 @@ public class BaseRepository<TModel, T>(DbContext context) : IBaseRepository<TMod
     protected readonly DbContext Context = context;
     protected readonly DbSet<TModel> Entities = context.Set<TModel>();
 
-    public async Task<List<TModel>> GetAll()
-    {
-        return await Entities.ToListAsync();
-    }
+    public async Task<List<TModel>> GetAll() => await Entities.ToListAsync();
 
-    public async Task<TModel?> Get(T id)
-    {
-        return await Entities.FirstOrDefaultAsync(m => Equals(m.Id, id));
-    }
+    public async Task<TModel?> Get(T id) => await Entities.FirstOrDefaultAsync(m => Equals(m.Id, id));
 
     public async Task<TModel> Create(TModel model)
     {
@@ -33,6 +29,10 @@ public class BaseRepository<TModel, T>(DbContext context) : IBaseRepository<TMod
         {
             Entities.Remove(toDelete);
             await Context.SaveChangesAsync();
+        }
+        else
+        {
+            throw new NonExistedSupplyException();
         }
     }
 }
