@@ -20,11 +20,15 @@ if (databaseConnectionString is null)
 }
 
 builder.Services.AddDbContext<SupplyContext>(options => options.UseNpgsql(databaseConnectionString));
+builder.Services.AddDbContext<OrderContext>(options => options.UseNpgsql(databaseConnectionString));
 
 builder.Services.AddScoped<IBaseRepository<Supply, Guid>, BaseRepository<Supply, Guid>>(serviceProvider =>
     new BaseRepository<Supply, Guid>(serviceProvider.GetRequiredService<SupplyContext>()));
+builder.Services.AddScoped<IBaseRepository<Order, Guid>, BaseRepository<Order, Guid>>(serviceProvider =>
+    new BaseRepository<Order, Guid>(serviceProvider.GetRequiredService<OrderContext>()));
 
 builder.Services.AddScoped<ISupplyService, SupplyService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddAutoMapper(typeof(AppMappingProfile));
 
