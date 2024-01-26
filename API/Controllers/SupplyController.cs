@@ -26,8 +26,9 @@ public class SupplyController(ISupplyService supplyService, IMapper mapper) : Co
             return Ok();
         }
 
-        return BadRequest();
+        return BadRequest($"Supply with name - {supply.Name} already exists.");
     }
+
     [HttpDelete("Supply")]
     public async Task<ActionResult> DeleteSupply(Guid id)
     {
@@ -38,6 +39,6 @@ public class SupplyController(ISupplyService supplyService, IMapper mapper) : Co
             return NoContent();
         }
 
-        return NotFound();
+        return NotFound($"Supply with id '{id}' is not exists");
     }
 }
