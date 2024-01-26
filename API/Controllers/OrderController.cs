@@ -38,6 +38,6 @@ public class OrderController(IOrderService orderService) : ControllerBase
             return NoContent();
         }
 
-        return NotFound($"Order with id '{id}' is not exists");
+        return NotFound();
     }
 }

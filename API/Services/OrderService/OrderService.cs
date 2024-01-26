@@ -54,15 +54,6 @@ public class OrderService(IBaseRepository<Order, Guid> orderRepository, IBaseRep
 
     public async Task<bool> Delete(Guid id)
     {
-        try
-        {
-            await orderRepository.Delete(id);
-
-            return true;
-        }
-        catch (NonExistedItemException)
-        {
-            return false;
-        }
+        return await orderRepository.Delete(id);
     }
 }

@@ -27,15 +27,6 @@ public class SupplyService(IBaseRepository<Supply, Guid> supplyRepository) : ISu
 
     public async Task<bool> Delete(Guid id)
     {
-        try
-        {
-            await supplyRepository.Delete(id);
-
-            return true;
-        }
-        catch (NonExistedItemException)
-        {
-            return false;
-        }
+        return await supplyRepository.Delete(id);
     }
 }

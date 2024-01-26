@@ -6,5 +6,5 @@ public interface IBaseRepository<TModel, T> where TModel : BaseModel<T>
     IQueryable<TModel> GetAllQuery();
     Task<TModel?> Get(T id);
     Task<TModel> Create(TModel model);
-    Task Delete(T id);
+    Task<bool> Delete(T id);
 }

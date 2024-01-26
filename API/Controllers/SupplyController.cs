@@ -39,6 +39,6 @@ public class SupplyController(ISupplyService supplyService, IMapper mapper) : Co
             return NoContent();
         }
 
-        return NotFound($"Supply with id '{id}' is not exists");
+        return NotFound();
     }
 }

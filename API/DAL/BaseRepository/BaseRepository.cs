@@ -23,7 +23,7 @@ public class BaseRepository<TModel, T>(DbContext context) : IBaseRepository<TMod
         return model;
     }
 
-    public async Task Delete(T id)
+    public async Task<bool> Delete(T id)
     {
         TModel? toDelete = await Entities.FirstOrDefaultAsync(m => Equals(m.Id, id));
 
@@ -31,10 +31,10 @@ public class BaseRepository<TModel, T>(DbContext context) : IBaseRepository<TMod
         {
             Entities.Remove(toDelete);
             await Context.SaveChangesAsync();
+
+            return true;
         }
-        else
-        {
-            throw new NonExistedItemException();
-        }
+
+        return false;
     }
 }
