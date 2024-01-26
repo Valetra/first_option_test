@@ -27,6 +27,11 @@ namespace API.Migrations.Order
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_Number",
+                table: "Orders",
+                column: "Number");
         }
 
         /// <inheritdoc />

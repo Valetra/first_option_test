@@ -48,6 +48,8 @@ namespace API.Migrations.Order
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Number");
+
                     b.ToTable("Orders");
                 });
 #pragma warning restore 612, 618
