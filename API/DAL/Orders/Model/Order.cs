@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Models;
 
+[Index(nameof(Number))]
 public class Order : BaseModel<Guid>
 {
     public int Number { get; set; }
