@@ -34,7 +34,7 @@ public class BaseRepository<TModel, T>(DbContext context) : IBaseRepository<TMod
         }
         else
         {
-            throw new NonExistedSupplyException();
+            throw new NonExistedItemException();
         }
     }
 }

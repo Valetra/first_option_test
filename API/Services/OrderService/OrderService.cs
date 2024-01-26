@@ -60,7 +60,7 @@ public class OrderService(IBaseRepository<Order, Guid> orderRepository, IBaseRep
 
             return true;
         }
-        catch (NonExistedSupplyException)
+        catch (NonExistedItemException)
         {
             return false;
         }

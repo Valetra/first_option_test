@@ -33,7 +33,7 @@ public class SupplyService(IBaseRepository<Supply, Guid> supplyRepository) : ISu
 
             return true;
         }
-        catch (NonExistedSupplyException)
+        catch (NonExistedItemException)
         {
             return false;
         }
