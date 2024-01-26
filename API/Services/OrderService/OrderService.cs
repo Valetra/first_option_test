@@ -21,7 +21,7 @@ public class OrderService(IBaseRepository<Order, Guid> orderRepository, IBaseRep
 
         if (orders.Any())
         {
-            lastOrderNumber = orders.Select(o => o.Number).Max();
+            lastOrderNumber = orders.Max(o => o.Number);
         }
 
         if (supplies.Any())
