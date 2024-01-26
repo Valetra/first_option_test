@@ -11,6 +11,8 @@ public class BaseRepository<TModel, T>(DbContext context) : IBaseRepository<TMod
 
     public async Task<List<TModel>> GetAll() => await Entities.ToListAsync();
 
+    public IQueryable<TModel> GetAllQuery() => Entities;
+
     public async Task<TModel?> Get(T id) => await Entities.FirstOrDefaultAsync(m => Equals(m.Id, id));
 
     public async Task<TModel> Create(TModel model)
