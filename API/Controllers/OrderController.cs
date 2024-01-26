@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using Services;
+using Exceptions;
 
 namespace Controllers;
 
@@ -18,14 +19,16 @@ public class OrderController(IOrderService orderService) : ControllerBase
     [HttpPost("Order")]
     public async Task<ActionResult> CreateOrder(List<Guid> supplies)
     {
-        bool isOrderCreated = await orderService.Create(supplies);
-
-        if (isOrderCreated)
+        try
         {
+            await orderService.Create(supplies);
+
             return Ok();
         }
-
-        return BadRequest("Id of a non-existing supply was passed");
+        catch (UnknownSupplyIdInOrderException)
+        {
+            return BadRequest("Unknown supply id was passed in order");
+        }
     }
 
     [HttpDelete("Order")]

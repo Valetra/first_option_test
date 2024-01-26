@@ -11,7 +11,7 @@ public class OrderService(IBaseRepository<Order, Guid> orderRepository, IBaseRep
         return await orderRepository.GetAll();
     }
 
-    public async Task<bool> Create(List<Guid> orderSupplies)
+    public async Task Create(List<Guid> orderSupplies)
     {
         IQueryable<Order> orders = orderRepository.GetAllQuery();
         IQueryable<Supply> supplies = supplyRepository.GetAllQuery();
@@ -32,7 +32,7 @@ public class OrderService(IBaseRepository<Order, Guid> orderRepository, IBaseRep
 
                 if (supply is null)
                 {
-                    return false;
+                    throw new UnknownSupplyIdInOrderException();
                 }
 
                 totalCost += supply.Cost;
@@ -48,8 +48,6 @@ public class OrderService(IBaseRepository<Order, Guid> orderRepository, IBaseRep
         };
 
         await orderRepository.Create(newOrder);
-
-        return true;
     }
 
     public async Task<bool> Delete(Guid id)
