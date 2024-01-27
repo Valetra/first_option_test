@@ -11,17 +11,15 @@ public class SupplyService(IBaseRepository<Supply, Guid> supplyRepository) : ISu
         return await supplyRepository.GetAll();
     }
 
-    public async Task<bool> Create(Supply supply)
+    public async Task Create(Supply supply)
     {
         try
         {
             await supplyRepository.Create(supply);
-
-            return true;
         }
-        catch (Exception)
+        catch (Microsoft.EntityFrameworkCore.DbUpdateException)
         {
-            return false;
+            throw new SupplyDuplicateKeyValueException();
         }
     }
 

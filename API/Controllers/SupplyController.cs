@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 
 using Services;
+using Exceptions;
 
 namespace Controllers;
 
@@ -19,14 +20,16 @@ public class SupplyController(ISupplyService supplyService, IMapper mapper) : Co
     [HttpPost("Supply")]
     public async Task<ActionResult> CreateSupply(RequestObjects.Supply supply)
     {
-        bool isSupplyCreationSucceeded = await supplyService.Create(mapper.Map<DAL.Models.Supply>(supply));
-
-        if (isSupplyCreationSucceeded)
+        try
         {
+            await supplyService.Create(mapper.Map<DAL.Models.Supply>(supply));
+
             return Ok();
         }
-
-        return BadRequest($"Supply with name - {supply.Name} already exists.");
+        catch (SupplyDuplicateKeyValueException)
+        {
+            return BadRequest($"Supply with name '{supply.Name}' already exists.");
+        }
     }
 
     [HttpDelete("Supply")]
