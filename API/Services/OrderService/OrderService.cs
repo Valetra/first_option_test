@@ -44,7 +44,7 @@ public class OrderService(IBaseRepository<Order, Guid> orderRepository, IBaseRep
             Number = lastOrderNumber + 1,
             Status = "Created",
             Supplies = orderSupplies,
-            OrderCost = totalCost,
+            Cost = totalCost,
         };
 
         await orderRepository.Create(newOrder);

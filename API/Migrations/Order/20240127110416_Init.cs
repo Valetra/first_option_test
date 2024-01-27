@@ -21,7 +21,7 @@ namespace API.Migrations.Order
                     Status = table.Column<string>(type: "text", nullable: false),
                     CreateDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Supplies = table.Column<List<Guid>>(type: "uuid[]", nullable: false),
-                    OrderCost = table.Column<int>(type: "integer", nullable: false)
+                    Cost = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API.Migrations.Order
 {
     [DbContext(typeof(OrderContext))]
-    [Migration("20240126112436_Init")]
+    [Migration("20240127110416_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -32,13 +32,13 @@ namespace API.Migrations.Order
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int>("Cost")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreateDateTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Number")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("OrderCost")
                         .HasColumnType("integer");
 
                     b.Property<string>("Status")
