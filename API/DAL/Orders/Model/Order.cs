@@ -9,5 +9,5 @@ public class Order : BaseModel<Guid>
     public string Status { get; set; } = "";
     public DateTime CreateDateTime { get; set; } = DateTime.UtcNow;
     public List<Guid> Supplies { get; set; } = new List<Guid>();
-    public int OrderCost { get; set; }
+    public int Cost { get; set; }
 }
