@@ -134,7 +134,6 @@ public class UnitTest
         inMemoryOrderRepository.entities.Add(order);
 
         List<Order> methodResult = await orderService.GetAll();
-
         List<Order> expectedResult = [order];
 
         Assert.True(EqualsOrdersByProperties(expectedResult, methodResult));
@@ -258,9 +257,101 @@ public class UnitTest
         await orderService.Delete(orderId);
 
         List<Order> expectedResult = [];
+        List<Order> result = await inMemoryOrderRepository.GetAll();
 
-        List<Order> orders = await inMemoryOrderRepository.GetAll();
+        Assert.True(EqualsOrdersByProperties(expectedResult, result));
+    }
 
-        Assert.True(EqualsOrdersByProperties(expectedResult, orders));
+    [Fact]
+    public async void SupplyServiceGetAllTest()
+    {
+        InMemorySupplyRepository inMemorySupplyRepository = new();
+
+        SupplyService supplyService = new(inMemorySupplyRepository);
+
+        Supply supply = new()
+        {
+            Id = new Guid("ef4e544a-29c9-468f-89b3-ab007af49e8f"),
+            Name = "Apple",
+            Cost = 5
+        };
+
+        inMemorySupplyRepository.entities.Add(supply);
+
+        List<Supply> methodResult = await supplyService.GetAll();
+        List<Supply> expectedResult = [supply];
+
+        Assert.True(EqualsSuppliesByProperties(expectedResult, methodResult));
+    }
+
+    [Fact]
+    public async void SupplyServiceCreateTest()
+    {
+        InMemorySupplyRepository inMemorySupplyRepository = new();
+
+        SupplyService supplyService = new(inMemorySupplyRepository);
+
+        Supply supply = new()
+        {
+            Id = new Guid("ef4e544a-29c9-468f-89b3-ab007af49e8f"),
+            Name = "Apple",
+            Cost = 5
+        };
+
+        await supplyService.Create(supply);
+
+        List<Supply> methodResult = [inMemorySupplyRepository.entities.First()];
+        List<Supply> expectedResult = [supply];
+
+        Assert.True(EqualsSuppliesByProperties(expectedResult, methodResult));
+    }
+
+    [Fact]
+    public async void SupplyServiceCreateWithDuplicateNameTest()
+    {
+        InMemorySupplyRepository inMemorySupplyRepository = new();
+
+        SupplyService supplyService = new(inMemorySupplyRepository);
+
+        Supply firstApple = new()
+        {
+            Id = new Guid("ef4e544a-29c9-468f-89b3-ab007af49e8f"),
+            Name = "Apple",
+            Cost = 5
+        };
+
+        Supply secondApple = new()
+        {
+            Id = new Guid("5dc15689-501f-4b6e-96ae-d5a7ac90c95a"),
+            Name = "Apple",
+            Cost = 5
+        };
+
+        await supplyService.Create(firstApple);
+
+        Assert.ThrowsAsync<Microsoft.EntityFrameworkCore.DbUpdateException>(async () => await supplyService.Create(secondApple));
+    }
+
+    [Fact]
+    public async void SupplyServiceDeleteTest()
+    {
+        InMemorySupplyRepository inMemorySupplyRepository = new();
+
+        SupplyService supplyService = new(inMemorySupplyRepository);
+
+        Supply supply = new()
+        {
+            Id = new Guid("ef4e544a-29c9-468f-89b3-ab007af49e8f"),
+            Name = "Apple",
+            Cost = 5
+        };
+
+        inMemorySupplyRepository.entities.Add(supply);
+
+        bool methodResult = await supplyService.Delete(supply.Id);
+        bool expectedResult = true;
+
+        Assert.Equal(methodResult, expectedResult);
+        Assert.True(!inMemorySupplyRepository.entities.Any());
     }
 }
