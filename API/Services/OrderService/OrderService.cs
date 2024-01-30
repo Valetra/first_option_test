@@ -28,18 +28,12 @@ public class OrderService(IBaseRepository<Order, Guid> orderRepository, IBaseRep
         {
             foreach (Guid supplyId in orderSupplies)
             {
-                Supply? supply = supplies.FirstOrDefault(s => s.Id == supplyId);
-
-                if (supply is null)
-                {
-                    throw new UnknownSupplyIdInOrderException();
-                }
-
+                Supply? supply = supplies.FirstOrDefault(s => s.Id == supplyId) ?? throw new UnknownSupplyIdInOrderException();
                 totalCost += supply.Cost;
             }
         }
 
-        Order newOrder = new Order()
+        Order newOrder = new()
         {
             Number = lastOrderNumber + 1,
             Status = "Created",
