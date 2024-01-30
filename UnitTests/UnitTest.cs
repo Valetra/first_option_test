@@ -6,7 +6,7 @@ namespace UnitTests;
 
 public class UnitTest
 {
-    static bool EqualsTwoSuppliesByProperties(Supply lhs, Supply rhs)
+    static bool EqualSuppliesByProperties(Supply lhs, Supply rhs)
     {
         return lhs.Id == rhs.Id
             && lhs.Name == rhs.Name
@@ -17,7 +17,7 @@ public class UnitTest
     {
         for (int i = 0; i < lhs.Count; i++)
         {
-            if (!EqualsTwoSuppliesByProperties(lhs[i], rhs[i]))
+            if (!EqualSuppliesByProperties(lhs[i], rhs[i]))
             {
                 return false;
             }
@@ -47,7 +47,7 @@ public class UnitTest
             && lhs.Cost == rhs.Cost;
     }
 
-    static bool EqualsOrderListsByProperties(List<Order> lhs, List<Order> rhs)
+    static bool EqualsOrdersByProperties(List<Order> lhs, List<Order> rhs)
     {
         for (int i = 0; i < lhs.Count; i++)
         {
@@ -136,7 +136,7 @@ public class UnitTest
 
         List<Order> expectedResult = [order];
 
-        Assert.True(EqualsOrderListsByProperties(expectedResult, methodResult));
+        Assert.True(EqualsOrdersByProperties(expectedResult, methodResult));
     }
 
     [Fact]
@@ -170,6 +170,7 @@ public class UnitTest
         ];
 
         await orderService.Create(orderSupplies);
+        inMemoryOrderRepository.entities.First().CreateDateTime = new DateTime();
 
         Order methodResult = inMemoryOrderRepository.entities.First();
 
@@ -177,6 +178,7 @@ public class UnitTest
         {
             Number = 1,
             Status = "Created",
+            CreateDateTime = new DateTime(),
             Supplies = orderSupplies,
             Cost = 75
         };
