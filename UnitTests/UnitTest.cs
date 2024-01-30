@@ -6,14 +6,14 @@ namespace UnitTests;
 
 public class UnitTest
 {
-    bool EqualsTwoSuppliesByProperties(Supply lhs, Supply rhs)
+    static bool EqualsTwoSuppliesByProperties(Supply lhs, Supply rhs)
     {
         return lhs.Id == rhs.Id
             && lhs.Name == rhs.Name
             && lhs.Cost == rhs.Cost;
     }
 
-    bool EqualsSuppliesByProperties(List<Supply> lhs, List<Supply> rhs)
+    static bool EqualsSuppliesByProperties(List<Supply> lhs, List<Supply> rhs)
     {
         for (int i = 0; i < lhs.Count; i++)
         {
@@ -25,7 +25,7 @@ public class UnitTest
         return true;
     }
 
-    static bool EqualsItemsByIds(List<Guid> lhs, List<Guid> rhs)
+    static bool EqualsGuidLists(List<Guid> lhs, List<Guid> rhs)
     {
         for (int i = 0; i < lhs.Count; i++)
         {
@@ -37,17 +37,17 @@ public class UnitTest
         return true;
     }
 
-    bool EqualsOrdersByProperties(Order lhs, Order rhs)
+    static bool EqualsOrdersByProperties(Order lhs, Order rhs)
     {
         return lhs.Id == rhs.Id
             && lhs.Number == rhs.Number
             && lhs.Status == rhs.Status
             && lhs.CreateDateTime == rhs.CreateDateTime
-            && EqualsItemsByIds(lhs.Supplies, rhs.Supplies)
+            && EqualsGuidLists(lhs.Supplies, rhs.Supplies)
             && lhs.Cost == rhs.Cost;
     }
 
-    bool EqualsOrdersByProperties(List<Order> lhs, List<Order> rhs)
+    static bool EqualsOrderListsByProperties(List<Order> lhs, List<Order> rhs)
     {
         for (int i = 0; i < lhs.Count; i++)
         {
@@ -135,6 +135,51 @@ public class UnitTest
         List<Order> methodResult = await orderService.GetAll();
 
         List<Order> expectedResult = [order];
+
+        Assert.True(EqualsOrderListsByProperties(expectedResult, methodResult));
+    }
+
+    [Fact]
+    public async void OrderServiceCreateTest()
+    {
+        InMemoryOrderRepository inMemoryOrderRepository = new();
+        InMemorySupplyRepository inMemorySupplyRepository = new();
+
+        OrderService orderService = new(inMemoryOrderRepository, inMemorySupplyRepository);
+
+        List<Supply> supplies =
+        [
+            new Supply() { Id = new Guid("ef4e544a-29c9-468f-89b3-ab007af49e8f"), Name = "Apple", Cost = 5},
+            new Supply() { Id = new Guid("296f2d8d-0e79-4955-87d4-fe3a7563725d"), Name = "Pineapple", Cost = 25},
+            new Supply() { Id = new Guid("efddefb4-c36d-4165-91d3-160b07d63eb9"), Name = "Banana", Cost = 10},
+            new Supply() { Id = new Guid("b3ab5b98-ba14-4ea4-98c1-0c743cb46b54"), Name = "Orange", Cost = 15},
+            new Supply() { Id = new Guid("ea062867-a902-4fc0-aff3-fd919946999c"), Name = "Lemon", Cost = 20}
+        ];
+
+        inMemorySupplyRepository.entities.AddRange(supplies);
+
+        List<Guid> orderSupplies =
+        [
+            new Guid("ef4e544a-29c9-468f-89b3-ab007af49e8f"),
+            new Guid("ef4e544a-29c9-468f-89b3-ab007af49e8f"),
+            new Guid("ef4e544a-29c9-468f-89b3-ab007af49e8f"),
+            new Guid("efddefb4-c36d-4165-91d3-160b07d63eb9"),
+            new Guid("efddefb4-c36d-4165-91d3-160b07d63eb9"),
+            new Guid("ea062867-a902-4fc0-aff3-fd919946999c"),
+            new Guid("ea062867-a902-4fc0-aff3-fd919946999c")
+        ];
+
+        await orderService.Create(orderSupplies);
+
+        Order methodResult = inMemoryOrderRepository.entities.First();
+
+        Order expectedResult = new()
+        {
+            Number = 1,
+            Status = "Created",
+            Supplies = orderSupplies,
+            Cost = 75
+        };
 
         Assert.True(EqualsOrdersByProperties(expectedResult, methodResult));
     }
