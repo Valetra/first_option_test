@@ -1,5 +1,6 @@
 using DAL.Models;
 using DAL.Repositories;
+using Services;
 
 namespace UnitTests;
 
@@ -24,7 +25,7 @@ public class UnitTest
         return true;
     }
 
-    bool EqualsItemsByIds(List<Guid> lhs, List<Guid> rhs)
+    static bool EqualsItemsByIds(List<Guid> lhs, List<Guid> rhs)
     {
         for (int i = 0; i < lhs.Count; i++)
         {
@@ -60,24 +61,24 @@ public class UnitTest
 
     public class InMemoryOrderRepository : IBaseRepository<Order, Guid>
     {
-        private readonly List<Order> _entities = [];
+        public readonly List<Order> entities = [];
 
-        public Task<List<Order>> GetAll() => Task.FromResult(_entities);
-        public IQueryable<Order> GetAllQuery() => _entities.AsQueryable();
-        public Task<Order?> Get(Guid id) => Task.FromResult(_entities.FirstOrDefault(m => Equals(m.Id, id)));
+        public Task<List<Order>> GetAll() => Task.FromResult(entities);
+        public IQueryable<Order> GetAllQuery() => entities.AsQueryable();
+        public Task<Order?> Get(Guid id) => Task.FromResult(entities.FirstOrDefault(m => Equals(m.Id, id)));
         public Task<Order> Create(Order order)
         {
-            _entities.Add(order);
+            entities.Add(order);
 
             return Task.FromResult(order);
         }
         public Task<bool> Delete(Guid id)
         {
-            Order? orderToDelete = _entities.FirstOrDefault(m => Equals(m.Id, id));
+            Order? orderToDelete = entities.FirstOrDefault(m => Equals(m.Id, id));
 
             if (orderToDelete is not null)
             {
-                _entities.Remove(orderToDelete);
+                entities.Remove(orderToDelete);
 
                 return Task.FromResult(true);
             }
@@ -88,29 +89,54 @@ public class UnitTest
 
     public class InMemorySupplyRepository : IBaseRepository<Supply, Guid>
     {
-        private readonly List<Supply> _entities = [];
+        public readonly List<Supply> entities = [];
 
-        public Task<List<Supply>> GetAll() => Task.FromResult(_entities);
-        public IQueryable<Supply> GetAllQuery() => _entities.AsQueryable();
-        public Task<Supply?> Get(Guid id) => Task.FromResult(_entities.FirstOrDefault(m => Equals(m.Id, id)));
+        public Task<List<Supply>> GetAll() => Task.FromResult(entities);
+        public IQueryable<Supply> GetAllQuery() => entities.AsQueryable();
+        public Task<Supply?> Get(Guid id) => Task.FromResult(entities.FirstOrDefault(m => Equals(m.Id, id)));
         public Task<Supply> Create(Supply supply)
         {
-            _entities.Add(supply);
+            entities.Add(supply);
 
             return Task.FromResult(supply);
         }
         public Task<bool> Delete(Guid id)
         {
-            Supply? supplyToDelete = _entities.FirstOrDefault(m => Equals(m.Id, id));
+            Supply? supplyToDelete = entities.FirstOrDefault(m => Equals(m.Id, id));
 
             if (supplyToDelete is not null)
             {
-                _entities.Remove(supplyToDelete);
+                entities.Remove(supplyToDelete);
 
                 return Task.FromResult(true);
             }
 
             return Task.FromResult(false);
         }
+    }
+
+    [Fact]
+    public async void OrderServiceGetAllTest()
+    {
+        InMemoryOrderRepository inMemoryOrderRepository = new();
+        InMemorySupplyRepository inMemorySupplyRepository = new();
+
+        OrderService orderService = new(inMemoryOrderRepository, inMemorySupplyRepository);
+
+        Order order = new()
+        {
+            Number = 1,
+            Status = "Created",
+            Supplies = [new Guid(), new Guid(), new Guid()],
+            Cost = 10
+        };
+
+        inMemoryOrderRepository.entities.Add(order);
+
+        List<Order> methodResult = await orderService.GetAll();
+
+        List<Order> expectedResult = [order];
+
+        Assert.True(EqualsOrdersByProperties(expectedResult, methodResult));
     }
 }
