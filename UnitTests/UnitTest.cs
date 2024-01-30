@@ -119,9 +119,8 @@ public class UnitTest
     public async void OrderServiceGetAllTest()
     {
         InMemoryOrderRepository inMemoryOrderRepository = new();
-        InMemorySupplyRepository inMemorySupplyRepository = new();
 
-        OrderService orderService = new(inMemoryOrderRepository, inMemorySupplyRepository);
+        OrderService orderService = new(inMemoryOrderRepository, new InMemorySupplyRepository());
 
         Order order = new()
         {
